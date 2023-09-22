@@ -18,13 +18,15 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    cb(null, file.originalname); // Use the original filename
   },
 });
+
 const upload = multer({ storage });
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.post("/upload", upload.single("image"), (req, res) => {
+  console.log(req.file);
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
